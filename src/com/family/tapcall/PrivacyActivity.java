@@ -32,7 +32,7 @@ import android.widget.Toast;
 public class PrivacyActivity extends Activity {
 
     /** 隐私政策正文（纯本地应用：不收集、不联网、无第三方 SDK） */
-    public static final String POLICY = "贴卡拨号 隐私政策（版本 1.1.0，生效日期：2026-10-12）\n\n一、我们收集什么\n本应用不收集、不上传、不共享任何个人信息。\n· 未申请联网权限（没有 INTERNET 权限），应用完全离线运行；\n· 未集成任何第三方 SDK（无统计、无广告、无崩溃上报）。\n\n二、信息保存在哪里\n· 你输入的号码、拨号方式等设置，只保存在本机应用私有目录，卸载应用即删除；\n· 卡里的号码保存在 NFC 卡片本身，不经过任何服务器。\n\n三、申请的权限与用途\n· NFC（android.permission.NFC）：读取卡片内容，或被卡片唤醒；\n· 拨打电话（android.permission.CALL_PHONE）：贴卡后直接拨出你设置的号码；\n· 以上权限只用于实现对应功能，不作他用。\n\n四、未成年人\n本应用是家庭辅助工具，建议在成年人指导下使用。\n\n五、联系方式\n（此处填写开发者联系方式或开源仓库地址）\n\n六、政策变更\n本政策如有更新，将随应用版本一并更新并在本页展示。";
+    public static final String POLICY = "贴卡拨号 隐私政策（版本 1.1.2，生效日期：2026-10-12）\n\n一、我们收集什么\n本应用不收集、不上传、不共享任何个人信息。\n· 未申请联网权限（没有 INTERNET 权限），应用完全离线运行；\n· 未集成任何第三方 SDK（无统计、无广告、无崩溃上报）。\n\n二、信息保存在哪里\n· 你输入的号码、拨号方式等设置，只保存在本机应用私有目录，卸载应用即删除；\n· 卡里的号码保存在 NFC 卡片本身，不经过任何服务器。\n\n三、申请的权限与用途\n· NFC（android.permission.NFC）：读取卡片内容，或被卡片唤醒；\n· 拨打电话（android.permission.CALL_PHONE）：贴卡后直接拨出你设置的号码；\n· 以上权限只用于实现对应功能，不作他用。\n\n四、未成年人\n本应用是家庭辅助工具，建议在成年人指导下使用。\n\n五、联系方式\n本项目为开源软件，问题与建议请提交到：\nhttps://github.com/45676/TapCall/issues\n\n六、政策变更\n本政策如有更新，将随应用版本一并更新并在本页展示。";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

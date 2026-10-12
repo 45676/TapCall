@@ -62,10 +62,13 @@ public class AboutActivity extends Activity {
                 + "· 不联网（未申请网络权限）\n"
                 + "· 无广告、无统计、无第三方 SDK\n"
                 + "· 号码只保存在本机和卡片里\n\n"
-                + "应用备案号：（尚未上架，如未来在国内应用商店发布，此处展示备案号）\n\n"
-                + "开源仓库：（如发布到 GitHub，此处填写仓库地址）\n"
-                + "开源许可：GNU GPL-3.0（可自由使用/修改，分发修改版需同样开源）\n\n"
-                + "联系方式：（此处填写开发者联系方式）");
+                + "开源仓库：https://github.com/45676/TapCall\n"
+                + "开源许可：GNU GPL-3.0（可自由使用/修改，分发修改版需同样开源）\n"
+                + "问题反馈：https://github.com/45676/TapCall/issues\n\n"
+                + "开发方式：本项目由 AI 辅助开发（模型 DeepSeek-V4.1-Flash），\n"
+                + "全部功能均在真机（红米 Turbo 5 Max）上人工验证。\n\n"
+                + "应用备案号：本应用未在国内应用商店上架，无需备案；\n"
+                + "如将来上架，备案号将展示于此。");
         root.addView(info);
 
         Button policy = new Button(this);
