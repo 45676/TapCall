@@ -18,7 +18,8 @@ param(
   [string]$Sdk = 'D:\AndroidBuild\sdk',
   [string]$Jdk = 'D:\AndroidBuild\jdk',
   [string]$Python = 'python',
-  [string]$Stage = ''
+  [string]$Stage = '',
+  [string]$StorePass = ''
 )
 # NOTE: aapt2/d8 are native tools and fail on non-ASCII paths, so the project is
 # copied into an ASCII staging directory first; the APK is copied back at the end.
@@ -45,6 +46,15 @@ $bt  = Join-Path $Sdk 'build-tools\34.0.0'
 $aj  = Join-Path $Sdk 'platforms\android-34\android.jar'
 $apk = Join-Path $app 'TapCall.apk'
 
+# Keystore password lookup order: -StorePass parameter, then env TAPCALL_KS_PASS,
+# then a local file next to (outside) the project: ../tapcall_keystore.pass
+# The keystore and its password are never stored in this repository.
+if ([string]::IsNullOrWhiteSpace($StorePass)) { $StorePass = $env:TAPCALL_KS_PASS }
+if ([string]::IsNullOrWhiteSpace($StorePass)) {
+  $passFile = Join-Path (Split-Path $app -Parent) 'tapcall_keystore.pass'
+  if (Test-Path $passFile) { $StorePass = (Get-Content $passFile -Raw).Trim() }
+}
+
 foreach ($p in @("$bt\aapt2.exe", "$bt\d8.bat", "$bt\zipalign.exe", "$bt\apksigner.bat", $aj, "$Jdk\bin\javac.exe", "$Jdk\bin\keytool.exe")) {
   if (-not (Test-Path $p)) { throw "missing build component: $p" }
 }
@@ -57,7 +67,7 @@ Write-Host '[1/6] aapt2 compile resources'
 if ($LASTEXITCODE -ne 0) { throw 'aapt2 compile failed' }
 
 Write-Host '[2/6] aapt2 link'
-& "$bt\aapt2.exe" link -o (Join-Path $out 'base.apk') -I $aj --manifest (Join-Path $Stage 'AndroidManifest.xml') -R (Join-Path $out 'res.zip') --java $gen --min-sdk-version 23 --target-sdk-version 34 --version-code 2 --version-name 1.0.1 --auto-add-overlay
+& "$bt\aapt2.exe" link -o (Join-Path $out 'base.apk') -I $aj --manifest (Join-Path $Stage 'AndroidManifest.xml') -R (Join-Path $out 'res.zip') --java $gen --min-sdk-version 23 --target-sdk-version 34 --auto-add-overlay
 if ($LASTEXITCODE -ne 0) { throw 'aapt2 link failed' }
 
 Write-Host '[3/6] javac'
@@ -79,11 +89,15 @@ if ($LASTEXITCODE -ne 0) { throw 'zipalign failed' }
 
 Write-Host '[6/6] sign'
 $ks = Join-Path $app 'tapcall.jks'
+if ([string]::IsNullOrWhiteSpace($StorePass)) {
+  throw 'keystore password not found. Pass -StorePass, or set env TAPCALL_KS_PASS, or create ../tapcall_keystore.pass'
+}
 if (-not (Test-Path $ks)) {
-  & "$Jdk\bin\keytool.exe" -genkeypair -keystore $ks -alias tapcall -keyalg RSA -keysize 2048 -validity 10000 -storepass tapcall123 -keypass tapcall123 -dname "CN=TapCall,O=Family,C=CN"
+  Write-Host 'no keystore found - creating a new one (self-signed)'
+  & "$Jdk\bin\keytool.exe" -genkeypair -keystore $ks -alias tapcall -keyalg RSA -keysize 2048 -validity 10000 -storepass $StorePass -keypass $StorePass -dname "CN=TapCall,O=Family,C=CN"
   if ($LASTEXITCODE -ne 0) { throw 'keytool failed' }
 }
-& "$bt\apksigner.bat" sign --ks $ks --ks-pass pass:tapcall123 --key-pass pass:tapcall123 --out $apk (Join-Path $out 'aligned.apk')
+& "$bt\apksigner.bat" sign --ks $ks --ks-pass "pass:$StorePass" --key-pass "pass:$StorePass" --out $apk (Join-Path $out 'aligned.apk')
 if ($LASTEXITCODE -ne 0) { throw 'apksigner failed' }
 & "$bt\apksigner.bat" verify --print-certs $apk
 
