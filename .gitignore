@@ -1,0 +1,14 @@
+# 构建产物
+build/
+*.apk
+*.apk.idsig
+
+# 签名库：绝对不要提交（泄露=别人能签出跟你同签名的"升级包"）
+*.jks
+*.keystore
+
+# 本地配置
+local.properties
+.gradle/
+.idea/
+*.iml
